@@ -1,7 +1,18 @@
 [package]
-name = "astro_units"
-version = "0.1.0"
+authors = ["The Comamba <thecomamba@jojoheinze.de>"]
+categories = ["science"]
+description = "Access the Gaia ESA Archive for astronomical data."
 edition = "2024"
+keywords = ["astronomy", "units"]
+license = "MIT"
+name = "astro_units"
+readme = "README.md"
+repository = "https://github.com/TheComamba/astro_units"
+version = "1.0.0"
+
+[lib]
+name         = "astro_units"
+crate-type   = ["rlib"]
 
 [dependencies]
 uom = { version = "0.36.0", default-features = false, features = ["f64", "si", "std"] }
