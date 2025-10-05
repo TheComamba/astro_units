@@ -10,7 +10,9 @@ pub mod illuminance;
 pub mod irradiance;
 pub mod length;
 pub mod luminosity;
+pub mod luminous_intensity;
 pub mod mass;
+pub mod solid_angle;
 pub mod time;
 
 #[cfg(test)]
