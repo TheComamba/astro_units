@@ -3,22 +3,22 @@ use std::f64::consts::PI;
 use uom::si::{angle::radian, f64::Angle};
 
 #[inline(always)]
-pub(crate) fn quarter_circ() -> Angle {
+pub fn quarter_circ() -> Angle {
     Angle::new::<radian>(2. * PI / 4.)
 }
 
 #[inline(always)]
-pub(crate) fn half_circ() -> Angle {
+pub fn half_circ() -> Angle {
     Angle::new::<radian>(2. * PI / 2.)
 }
 
 #[inline(always)]
-pub(crate) fn three_quarter_circ() -> Angle {
+pub fn three_quarter_circ() -> Angle {
     Angle::new::<radian>(2. * PI * 3. / 4.)
 }
 
 #[inline(always)]
-pub(crate) fn full_circ() -> Angle {
+pub fn full_circ() -> Angle {
     Angle::new::<radian>(2. * PI)
 }
 
@@ -50,8 +50,7 @@ pub fn normalized_angle(mut angle: Angle) -> Angle {
     angle
 }
 
-#[cfg(test)]
-pub(crate) fn angle_eq_within(actual: Angle, expected: Angle, accuracy: Angle) -> bool {
+pub fn angle_eq_within(actual: Angle, expected: Angle, accuracy: Angle) -> bool {
     let diff = normalized_angle(actual - expected);
     diff.abs() < accuracy
 }
