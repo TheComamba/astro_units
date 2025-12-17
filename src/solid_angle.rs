@@ -26,7 +26,7 @@ pub fn radius_and_distance_to_solid_angle(radius: Length, distance: Length) -> S
 ///
 /// Uses the formula: A = Ω * r²
 pub fn solid_angle_to_area_at_distance(solid_angle: SolidAngle, distance: Length) -> Area {
-    (solid_angle * distance * distance).into()
+    solid_angle * distance * distance
 }
 
 #[cfg(test)]
