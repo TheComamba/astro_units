@@ -1,11 +1,5 @@
-//! Astronomy-related units and convenience functions.
-//!
-//! This crate extends the `uom` (Units of Measurement) library with additional units
-//! and convenience functions commonly used in astronomy.
-
 #![warn(missing_docs)]
-
-// https://www.astro.princeton.edu/~gk/A403/constants.pdf
+#![doc = include_str!("../README.md")]
 
 #[macro_use]
 extern crate uom;
