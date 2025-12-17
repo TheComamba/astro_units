@@ -1,15 +1,30 @@
+//! Some convenience functions for handling solid angles.
+//!
+//! https://en.wikipedia.org/wiki/Solid_angle
+
 use std::f64::consts::PI;
 
 use uom::si::f64::{Area, Length, SolidAngle};
 
+/// Calculates the solid angle subtended by a surface area at a given distance.
+///
+/// Uses the formula: Ω = A / r²
+/// This implies that the surface area is on the surface of a sphere.
 pub fn area_and_distance_to_solid_angle(surface_area: Area, distance: Length) -> SolidAngle {
     (surface_area / (distance * distance)).into()
 }
 
+/// Calculates the solid angle subtended by a sphere of a given radius at a given distance.
+///
+/// Uses the formula: Ω = π * r² / R²
+/// This assumes that R >> r.
 pub fn radius_and_distance_to_solid_angle(radius: Length, distance: Length) -> SolidAngle {
     area_and_distance_to_solid_angle(PI * radius * radius, distance)
 }
 
+/// Calculates the surface area subtended by a solid angle at a given distance.
+///
+/// Uses the formula: A = Ω * r²
 pub fn solid_angle_to_area_at_distance(solid_angle: SolidAngle, distance: Length) -> Area {
     (solid_angle * distance * distance).into()
 }

@@ -1,3 +1,5 @@
+//! This module defines additional time units commonly used in astronomy.
+
 unit! {
     system: uom::si;
 
