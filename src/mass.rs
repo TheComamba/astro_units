@@ -1,3 +1,5 @@
+//! This module defines additional mass units commonly used in astronomy.
+
 unit! {
     system: uom::si;
 

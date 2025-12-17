@@ -1,6 +1,5 @@
 #![warn(missing_docs)]
-
-// https://www.astro.princeton.edu/~gk/A403/constants.pdf
+#![doc = include_str!("../README.md")]
 
 #[macro_use]
 extern crate uom;

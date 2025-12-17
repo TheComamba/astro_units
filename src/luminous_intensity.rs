@@ -1,3 +1,12 @@
+//! Luminous Intensity is a measure of the wavelength-weighted power emitted by a light source in a particular direction per unit solid angle.
+//!
+//! It is measured in candelas (cd), which is equivalent to lumens per steradian (lm/sr).
+//! In contrast to Luminosity, Luminous Intensity is a measure of the brightness of a source as perceived by the human eye.
+//!
+//! https://en.wikipedia.org/wiki/Luminous_intensity
+//!
+//! This module provides some functions to convert between absolute/apparent astronomical magnitude and luminous intensity.
+
 use uom::si::{
     f64::{Length, LuminousIntensity, SolidAngle},
     length::parsec,
@@ -10,42 +19,46 @@ use crate::illuminance::Illuminance;
 use super::illuminance::{apparent_magnitude_to_illuminance, illuminance_to_apparent_magnitude};
 
 #[inline(always)]
+/// The luminous intensity of the Sun.
 pub fn solar_luminous_intensity() -> LuminousIntensity {
     LuminousIntensity::new::<candela>(2.98e27)
 }
 
 #[inline(always)]
+/// Converts luminous intensity to a number of solar luminosities.
 pub fn luminous_intensity_to_solar_luminosities(luminous_intensity: LuminousIntensity) -> f64 {
     (luminous_intensity / solar_luminous_intensity()).into()
 }
 
 #[inline(always)]
+/// Converts an absolute astronomical magnitude to Luminous Intensity.
+///
+/// https://en.wikipedia.org/wiki/Absolute_magnitude
 pub fn absolute_magnitude_to_luminous_intensity(absolute_magnitude: f64) -> LuminousIntensity {
     let ten_pc = Length::new::<parsec>(10.);
     let illuminance = apparent_magnitude_to_illuminance(absolute_magnitude);
-    illuminance_to_luminous_intensity(illuminance, ten_pc)
+    calc_luminous_intensity(illuminance, ten_pc)
 }
 
 #[inline(always)]
+/// Converts Luminous Intensity to an absolute astronomical magnitude.
+///
+/// https://en.wikipedia.org/wiki/Absolute_magnitude
 pub fn luminous_intensity_to_absolute_magnitude(luminous_intensity: LuminousIntensity) -> f64 {
     let ten_pc = Length::new::<parsec>(10.);
-    let illuminance = luminous_intensity_to_illuminance(luminous_intensity, ten_pc);
+    let illuminance = calc_illuminance(luminous_intensity, ten_pc);
     illuminance_to_apparent_magnitude(illuminance)
 }
 
 #[inline(always)]
-pub fn luminous_intensity_to_illuminance(
-    luminous_intensity: LuminousIntensity,
-    distance: Length,
-) -> Illuminance {
+/// Calculates the Illuminance received by a source with a given Lunimous Intensity at a given distance.
+pub fn calc_illuminance(luminous_intensity: LuminousIntensity, distance: Length) -> Illuminance {
     luminous_intensity * SolidAngle::new::<steradian>(1.) / (distance * distance)
 }
 
 #[inline(always)]
-pub fn illuminance_to_luminous_intensity(
-    illuminance: Illuminance,
-    distance: Length,
-) -> LuminousIntensity {
+/// Using Illuminance received from a source at a given distance, this calculates the Luminous Intensity of the source.
+pub fn calc_luminous_intensity(illuminance: Illuminance, distance: Length) -> LuminousIntensity {
     illuminance * (distance * distance) / SolidAngle::new::<steradian>(1.)
 }
 
@@ -68,8 +81,8 @@ mod tests {
             let input = i as f64;
             let luminous_intensity = LuminousIntensity::new::<candela>(input);
             let distance = Length::new::<meter>(1.);
-            let illuminance = luminous_intensity_to_illuminance(luminous_intensity, distance);
-            let output = illuminance_to_luminous_intensity(illuminance, distance);
+            let illuminance = calc_illuminance(luminous_intensity, distance);
+            let output = calc_luminous_intensity(illuminance, distance);
             assert!(eq(input, output.value));
         }
     }
@@ -88,7 +101,7 @@ mod tests {
     fn illuminance_of_1_cd_source_at_1_m() {
         let luminous_intensity = LuminousIntensity::new::<candela>(1.);
         let distance = Length::new::<meter>(1.);
-        let illuminance = luminous_intensity_to_illuminance(luminous_intensity, distance);
+        let illuminance = calc_illuminance(luminous_intensity, distance);
         let actual = illuminance.get::<lux>();
         let expected = ILLUMINANCE_AT_UNIT_DISTANCE;
         assert!(eq(actual, expected));
@@ -100,7 +113,7 @@ mod tests {
             let cd = i as f64;
             let luminous_intensity = LuminousIntensity::new::<candela>(cd);
             let distance = Length::new::<meter>(1.);
-            let illuminance = luminous_intensity_to_illuminance(luminous_intensity, distance);
+            let illuminance = calc_illuminance(luminous_intensity, distance);
             let expected = cd * ILLUMINANCE_AT_UNIT_DISTANCE;
             let actual = illuminance.get::<lux>();
             assert!(eq(actual, expected));
@@ -112,7 +125,7 @@ mod tests {
         for d in 1..10 {
             let distance = Length::new::<meter>(d as f64);
             let luminous_intensity = LuminousIntensity::new::<candela>(1.);
-            let illuminance = luminous_intensity_to_illuminance(luminous_intensity, distance);
+            let illuminance = calc_illuminance(luminous_intensity, distance);
             let expected = ILLUMINANCE_AT_UNIT_DISTANCE / (d * d) as f64;
             let actual = illuminance.get::<lux>();
             assert!(eq(actual, expected));
@@ -125,7 +138,7 @@ mod tests {
         for i in -10..10 {
             let input = i as f64;
             let luminous_intensity = absolute_magnitude_to_luminous_intensity(input);
-            let illuminance = luminous_intensity_to_illuminance(luminous_intensity, ten_pc);
+            let illuminance = calc_illuminance(luminous_intensity, ten_pc);
             let apparent_magnitude = illuminance_to_apparent_magnitude(illuminance);
             let absolute_magnitude = luminous_intensity_to_absolute_magnitude(luminous_intensity);
             assert!(eq(apparent_magnitude, absolute_magnitude));

@@ -1,28 +1,55 @@
-use uom::si::heat_flux_density::watt_per_square_meter;
+//! Illuminance is a measure for how much a surface is illuminated.
+//!
+//! Illuminance is defined as luminous flux per unit area, and measured in lux (lx), which is equivalent to lumens per square meter (lm/m²).
+//! In contrast to Irradiance, Illuminance is weighted according to the sensitivity of the human eye to different wavelengths of light.
+//! In an idealised world without extinction, the illuminance of a source as seen from a distance is equal to its luminous intensity divided by the surface area of a sphere with a radius equal to that distance.
+//!
+//! https://en.wikipedia.org/wiki/Illuminance
+//!
+//! This module provides a typed unit, and some functions to convert between apparent astronomical magnitude and illuminance.
 
-use crate::irradiance::Irradiance;
+/// Illuminance is a measure for how much a surface is illuminated.
+///
+/// Illuminance is defined as luminous flux per unit area, and measured in lux (lx), which is equivalent to lumens per square meter (lm/m²).
+/// In contrast to Irradiance, Illuminance is weighted according to the sensitivity of the human eye to different wavelengths of light.
+/// In an idealised world without extinction, the illuminance of a source as seen from a distance is equal to its luminous intensity divided by the surface area of a sphere with a radius equal to that distance.
+///
+/// https://en.wikipedia.org/wiki/Illuminance
+pub type Illuminance = uom::si::f64::Luminance; // Hack until https://github.com/iliekturtles/uom/issues/535 is resolved
 
-pub type Illuminance = uom::si::f64::Luminance; // Hack until https://github.com/iliekturtles/uom/pull/512 is merged
 #[allow(non_camel_case_types)]
+/// lux is the SI unit for illuminance, equivalent to lumens per square meter.
 pub type lux = uom::si::luminance::candela_per_square_meter;
 
 #[inline(always)]
+/// Returns the illuminance corresponding to an apparent visible magnitude of zero.
+///
+/// Per its original definition, the apparent magnitude zero point corresponds to the perceived brightness of the star Vega.
+///
+/// https://en.wikipedia.org/wiki/Apparent_magnitude
 pub fn aparent_visible_magnitude_zero() -> Illuminance {
     Illuminance::new::<lux>(2.6e-6)
 }
 
 #[inline(always)]
-pub fn irradiance_of_bolometric_zero() -> Irradiance {
-    Irradiance::new::<watt_per_square_meter>(2.518e-8)
-}
-
-#[inline(always)]
+/// Converts an apparent astronomical magnitude to Illuminance, a measure of the perceived brightniss.
+///
+/// Based on the formula:
+/// E = E0 * 10^(-m/2.5)
+///
+/// https://en.wikipedia.org/wiki/Apparent_magnitude
 pub fn apparent_magnitude_to_illuminance(apparent_magnitude: f64) -> Illuminance {
     let exponent = apparent_magnitude / -2.5;
     aparent_visible_magnitude_zero() * 10_f64.powf(exponent)
 }
 
 #[inline(always)]
+/// Converts Illuminance to an apparent astronomical magnitude.
+///
+/// Based on the formula:
+/// m = -2.5 * log10(E / E0)
+///
+/// https://en.wikipedia.org/wiki/Apparent_magnitude
 pub fn illuminance_to_apparent_magnitude(illuminance: Illuminance) -> f64 {
     -2.5 * (illuminance / aparent_visible_magnitude_zero())
         .log10()
@@ -38,7 +65,7 @@ mod tests {
 
     use super::*;
     use crate::{
-        luminous_intensity::{luminous_intensity_to_illuminance, solar_luminous_intensity},
+        luminous_intensity::{calc_illuminance, solar_luminous_intensity},
         tests::{eq, eq_within},
     };
 
@@ -70,7 +97,7 @@ mod tests {
     fn test_sunlight() {
         let luminous_intensity = solar_luminous_intensity();
         let distance = Length::new::<astronomical_unit>(1.);
-        let illuminance = luminous_intensity_to_illuminance(luminous_intensity, distance);
+        let illuminance = calc_illuminance(luminous_intensity, distance);
         let apparent_magnitude = illuminance_to_apparent_magnitude(illuminance);
         let expected_app_mag = -26.74;
         assert!(eq_within(apparent_magnitude, expected_app_mag, 0.05));
@@ -93,7 +120,7 @@ mod tests {
     fn test_sirius() {
         let luminous_intensity = 22. * solar_luminous_intensity();
         let distance = Length::new::<light_year>(8.6);
-        let illuminance = luminous_intensity_to_illuminance(luminous_intensity, distance);
+        let illuminance = calc_illuminance(luminous_intensity, distance);
         let apparent_magnitude = illuminance_to_apparent_magnitude(illuminance);
         let expected_app_mag = -1.46;
         assert!(eq_within(apparent_magnitude, expected_app_mag, 0.05));
