@@ -25,10 +25,6 @@ mod tests {
     use super::*;
     use crate::{length::solar_radius, tests::eq};
 
-    fn earth_semi_major_axis() -> Length {
-        Length::new::<meter>(1.496e11)
-    }
-
     #[test]
     fn test_area_and_distance_to_solid_angle() {
         let surface_area = Area::new::<square_meter>(1.0);

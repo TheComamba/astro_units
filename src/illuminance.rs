@@ -1,28 +1,53 @@
-use uom::si::heat_flux_density::watt_per_square_meter;
+//! Illuminance is a measure for how much a surface is illuminated.
+//!
+//! Illuminance is defined as luminous flux per unit area, and measured in lux (lx), which is equivalent to lumens per square meter (lm/m²).
+//! In contrast to Irradiance, Illuminance is weighted according to the sensitivity of the human eye to different wavelengths of light.
+//!
+//! https://en.wikipedia.org/wiki/Illuminance
+//!
+//! This module provides a typed unit, and some functions to convert between apparent astronomical magnitude and illuminance.
 
-use crate::irradiance::Irradiance;
+/// Illuminance is a measure for how much a surface is illuminated.
+///
+/// Illuminance is defined as luminous flux per unit area, and measured in lux (lx), which is equivalent to lumens per square meter (lm/m²).
+/// In contrast to Irradiance, Illuminance is weighted according to the sensitivity of the human eye to different wavelengths of light.
+///
+/// https://en.wikipedia.org/wiki/Illuminance
+pub type Illuminance = uom::si::f64::Luminance; // Hack until https://github.com/iliekturtles/uom/issues/535 is resolved
 
-pub type Illuminance = uom::si::f64::Luminance; // Hack until https://github.com/iliekturtles/uom/pull/512 is merged
 #[allow(non_camel_case_types)]
+/// lux is the SI unit for illuminance, equivalent to lumens per square meter.
 pub type lux = uom::si::luminance::candela_per_square_meter;
 
 #[inline(always)]
+/// Returns the illuminance corresponding to an apparent visible magnitude of zero.
+///
+/// Per its original definition, the apparent magnitude zero point corresponds to the perceived brightness of the star Vega.
+///
+/// https://en.wikipedia.org/wiki/Apparent_magnitude
 pub fn aparent_visible_magnitude_zero() -> Illuminance {
     Illuminance::new::<lux>(2.6e-6)
 }
 
 #[inline(always)]
-pub fn irradiance_of_bolometric_zero() -> Irradiance {
-    Irradiance::new::<watt_per_square_meter>(2.518e-8)
-}
-
-#[inline(always)]
+/// Converts an apparent astronomical magnitude to Illuminance, a measure of the perceived brightniss.
+///
+/// Based on the formula:
+/// E = E0 * 10^(-m/2.5)
+///
+/// https://en.wikipedia.org/wiki/Apparent_magnitude
 pub fn apparent_magnitude_to_illuminance(apparent_magnitude: f64) -> Illuminance {
     let exponent = apparent_magnitude / -2.5;
     aparent_visible_magnitude_zero() * 10_f64.powf(exponent)
 }
 
 #[inline(always)]
+/// Converts Illuminance to an apparent astronomical magnitude.
+///
+/// Based on the formula:
+/// m = -2.5 * log10(E / E0)
+///
+/// https://en.wikipedia.org/wiki/Apparent_magnitude
 pub fn illuminance_to_apparent_magnitude(illuminance: Illuminance) -> f64 {
     -2.5 * (illuminance / aparent_visible_magnitude_zero())
         .log10()
