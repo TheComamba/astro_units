@@ -4,7 +4,10 @@
 
 use std::f64::consts::PI;
 
-use uom::si::f64::{Area, Length, SolidAngle};
+use uom::si::f64::{Area, Length};
+
+/// Type re-export.
+pub use uom::si::f64::SolidAngle;
 
 /// Calculates the solid angle subtended by a surface area at a given distance.
 ///

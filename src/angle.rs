@@ -2,7 +2,11 @@
 
 use std::f64::consts::PI;
 
-use uom::si::{angle::radian, f64::Angle};
+/// Unit re-export
+pub use uom::si::angle::radian;
+
+/// Type re-export
+pub use uom::si::f64::Angle;
 
 #[inline(always)]
 /// Returns an angle of 90 degrees (π/2 radians).

@@ -5,12 +5,12 @@
 //!
 //! https://en.wikipedia.org/wiki/Luminosity
 
-use uom::si::{
-    f64::{LuminousIntensity, Power},
-    power::watt,
-};
+use uom::si::f64::{LuminousIntensity, Power};
 
 use super::luminous_intensity::solar_luminous_intensity;
+
+/// Unit re-export
+pub use uom::si::power::watt;
 
 /// Luminosity is the total amount of energy radiated by a star, galaxy, or other object per unit time. It is measured in watts (W).
 ///

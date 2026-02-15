@@ -4,7 +4,8 @@
 //!
 //! https://en.wikipedia.org/wiki/Irradiance
 
-use uom::si::heat_flux_density::watt_per_square_meter;
+/// Unit re-export
+pub use uom::si::heat_flux_density::watt_per_square_meter;
 
 /// Irradiance is the power of electromagnetic radiation per unit area (radiative flux) incident on a surface. It is measured in watts per square meter (W/m²).
 ///
