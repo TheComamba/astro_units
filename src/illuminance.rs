@@ -8,18 +8,11 @@
 //!
 //! This module provides a typed unit, and some functions to convert between apparent astronomical magnitude and illuminance.
 
-/// Illuminance is a measure for how much a surface is illuminated.
-///
-/// Illuminance is defined as luminous flux per unit area, and measured in lux (lx), which is equivalent to lumens per square meter (lm/m²).
-/// In contrast to Irradiance, Illuminance is weighted according to the sensitivity of the human eye to different wavelengths of light.
-/// In an idealised world without extinction, the illuminance of a source as seen from a distance is equal to its luminous intensity divided by the surface area of a sphere with a radius equal to that distance.
-///
-/// https://en.wikipedia.org/wiki/Illuminance
-pub type Illuminance = uom::si::f64::Luminance; // Hack until https://github.com/iliekturtles/uom/issues/535 is resolved
+/// Unit re-export
+pub use uom::si::illuminance::lux;
 
-#[allow(non_camel_case_types)]
-/// lux is the SI unit for illuminance, equivalent to lumens per square meter.
-pub type lux = uom::si::luminance::candela_per_square_meter;
+/// Type re-export
+pub use uom::si::f64::Illuminance;
 
 #[inline(always)]
 /// Returns the illuminance corresponding to an apparent visible magnitude of zero.

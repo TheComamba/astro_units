@@ -8,15 +8,18 @@
 //! This module provides some functions to convert between absolute/apparent astronomical magnitude and luminous intensity.
 
 use uom::si::{
-    f64::{Length, LuminousIntensity, SolidAngle},
+    f64::{Illuminance, Length, SolidAngle},
     length::parsec,
-    luminous_intensity::candela,
     solid_angle::steradian,
 };
 
-use crate::illuminance::Illuminance;
-
 use super::illuminance::{apparent_magnitude_to_illuminance, illuminance_to_apparent_magnitude};
+
+/// Unit re-export.
+pub use uom::si::luminous_intensity::candela;
+
+/// Type re-export.
+pub use uom::si::f64::LuminousIntensity;
 
 #[inline(always)]
 /// The luminous intensity of the Sun.
@@ -53,7 +56,7 @@ pub fn luminous_intensity_to_absolute_magnitude(luminous_intensity: LuminousInte
 #[inline(always)]
 /// Calculates the Illuminance received by a source with a given Lunimous Intensity at a given distance.
 pub fn calc_illuminance(luminous_intensity: LuminousIntensity, distance: Length) -> Illuminance {
-    luminous_intensity * SolidAngle::new::<steradian>(1.) / (distance * distance)
+    (luminous_intensity * SolidAngle::new::<steradian>(1.) / (distance * distance)).into()
 }
 
 #[inline(always)]
@@ -64,13 +67,10 @@ pub fn calc_luminous_intensity(illuminance: Illuminance, distance: Length) -> Lu
 
 #[cfg(test)]
 mod tests {
-    use uom::si::length::meter;
+    use uom::si::{illuminance::lux, length::meter};
 
     use super::*;
-    use crate::{
-        illuminance::lux,
-        tests::{eq, eq_within},
-    };
+    use crate::tests::{eq, eq_within};
 
     const REAL_DATA_TEST_ACCURACY: f64 = 0.05;
     const ILLUMINANCE_AT_UNIT_DISTANCE: f64 = 1.;
